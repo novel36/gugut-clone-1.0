@@ -7,19 +7,36 @@
 	import spotifypodcast from '$lib/images/spotify.svg';
 	import teraki from '$lib/images/teraki.svg';
 	import play from '$lib/images/play.svg';
+	// @ts-ignore
 	import stop from '$lib/images/stop.svg';
+	// @ts-ignore
 	import episodeplay from '$lib/images/episode-play.svg';
+	// @ts-ignore
 	import date from '$lib/images/date.svg';
 	import AudioEpisodeComponent from './component/AudioEpisodeComponent.svelte';
 	import EpisodeCard from './component/EpisodeCard.svelte';
 	import VideoPlayer from './VideoPlayer.svelte';
+	import { isAudioPlaying, link } from './playaudio';
+	
+	
 	/**
 	 * @type {any}
 	 */
 	let playaudio;
+	// @ts-ignore
+	/**
+	 * @type {any}
+	 */
 	let playYoutubeLink;
+	// @ts-ignore
+	/**
+	 * @type {null}
+	 */
+	let currentlyPlaying;
+
+	// @ts-ignore
 	export let data;
-	let isvideoplaying=false;
+	let isvideoplaying = false;
 	/**
 	 * @param {any} params
 	 */
@@ -33,10 +50,29 @@
 	function onVideoPlaying(params) {
 		// console.log(params.detail.isvideoplaying);
 		// console.log(params.detail.youtubelink);
+		// @ts-ignore
 		isvideoplaying = params.detail.isvideoplaying;
+		// @ts-ignore
 		playYoutubeLink = params.detail.youtubelink;
 	}
+	// @ts-ignore
+	function togglePlayback(itemId, audioLink) {
+		// @ts-ignore
+		if (currentlyPlaying === itemId) {
+			$link="";
+			currentlyPlaying = null;
+			$isAudioPlaying = false;
+			console.log(audioLink);
+		} else {
+			$isAudioPlaying = true;
+			$link=audioLink;
+			console.log(audioLink);
+			$isAudioPlaying = true;
 
+			currentlyPlaying = itemId;
+			
+		}
+	}
 </script>
 
 <svelte:head>
@@ -44,7 +80,7 @@
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 {#if isvideoplaying}
-	<VideoPlayer on:videoplaying={videoplaying} youtubelink={playYoutubeLink}  />
+	<VideoPlayer on:videoplaying={videoplaying} youtubelink={playYoutubeLink} />
 {:else}
 	<section>
 		<section class="w-full">
@@ -282,7 +318,13 @@
 						</div>
 						<div class="pt-10">
 							{#each data.episodes as item, i}
-								<AudioEpisodeComponent audioInfo={item} />
+								<AudioEpisodeComponent
+									audioInfo={item}
+									itemId={i}
+									currentlyPlaying={currentlyPlaying}
+									togglePlayback={togglePlayback}
+									audioLink={item.link}
+								/>
 							{/each}
 						</div>
 					</div>
